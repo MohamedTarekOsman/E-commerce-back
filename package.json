@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "engines": {
-    "node": "18.x"
-  },
   "scripts": {
     "dev": "nodemon server.js",
     "prod": "SET NODE_ENV=production & node server.js"
