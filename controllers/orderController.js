@@ -155,63 +155,122 @@ const chekoutSession=asyncHandler(async(req,res,next)=>{
     res.status(200).json({status:'success',session})
 })
 
-
-const createCartOrder=async(session)=>{
+const createCartOrder = async (session) => {
     const cartId = session.client_reference_id;
     const shippingAddress = session.metadata;
-    const orderPrice=session.amount_total /100;
-
-    const cart =await Cart.findById(cartId);
-    const user=await User.findOne({email:session.customer_email});
-
-
+    const orderPrice = session.amount_total / 100;
+  
+    const cart = await Cart.findById(cartId);
+    const user = await User.findOne({ email: session.customer_email });
+  
     // create cash order with payment method (card)
-    const order =await Order.create({
-        user:user._id,
-        cartItems:cart.cartItems,
-        shippingAddress,
-        totalOrderPrice:orderPrice,
-        isPaid:true,
-        paidAt:Date.now(),
-        paymentMethodType:'card'
-    })
-
-
-        // after create cash order , decrement product quantity , increment product sold
-        if (order) {
-            const bulkOption=cart.cartItems.map((item)=>({
-                updateOne:{
-                    filter:{_id:item.product},
-                    update:{$inc :{quantity:-item.quantity, sold: +item.quantity}}
-                }
-            }))
-            await Product.bulkWrite(bulkOption,{})
-        
-            // clear cart depend on cartId
-            await Cart.findByIdAndDelete(cartId)
-        }
-}
-
-//@desc     this will run when stripe payment success paid
-//@route    POST /webhook-checkout
-//@access   Protected/User
-const webhookCheckout=(req, res, next) => {
+    const order = await Order.create({
+      user: user._id,
+      cartItems: cart.cartItems,
+      shippingAddress,
+      totalOrderPrice: orderPrice,
+      isPaid: true,
+      paidAt: Date.now(),
+      paymentMethodType: 'card',
+    });
+  
+    // after create cash order , decrement product quantity , increment product sold
+    if (order) {
+      const bulkOption = cart.cartItems.map((item) => ({
+        updateOne: {
+          filter: { _id: item.product },
+          update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+        },
+      }));
+      await Product.bulkWrite(bulkOption, {});
+  
+      // clear cart depend on cartId
+      await Cart.findByIdAndDelete(cartId);
+    }
+  };
+  
+  //@desc     this will run when stripe payment success paid
+  //@route    POST /webhook-checkout
+  //@access   Protected/User
+  const webhookCheckout = async (req, res, next) => {
     const sig = req.headers['stripe-signature'];
     let event;
     try {
-        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WBHOOK_SECRET);
+      event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WBHOOK_SECRET);
     } catch (err) {
-        return res.status(400).send(`Webhook Error: ${err.message}`);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
     }
-    
-  // Handle the event
-  if(event.type === 'checkout.session.completed') {
-    //create order
-    createCartOrder(event.data.object);
-  }
+  
+    // Handle the event
+    if (event.type === 'checkout.session.completed') {
+      try {
+        await createCartOrder(event.data.object);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  
+    res.status(200).json({ received: true });
+  };
 
-  res.status(200).json({received:true})
-}
+
+
+// const createCartOrder=async(session)=>{
+//     const cartId = session.client_reference_id;
+//     const shippingAddress = session.metadata;
+//     const orderPrice=session.amount_total /100;
+
+//     const cart =await Cart.findById(cartId);
+//     const user=await User.findOne({email:session.customer_email});
+
+
+//     // create cash order with payment method (card)
+//     const order =await Order.create({
+//         user:user._id,
+//         cartItems:cart.cartItems,
+//         shippingAddress,
+//         totalOrderPrice:orderPrice,
+//         isPaid:true,
+//         paidAt:Date.now(),
+//         paymentMethodType:'card'
+//     })
+
+
+//         // after create cash order , decrement product quantity , increment product sold
+//         if (order) {
+//             const bulkOption=cart.cartItems.map((item)=>({
+//                 updateOne:{
+//                     filter:{_id:item.product},
+//                     update:{$inc :{quantity:-item.quantity, sold: +item.quantity}}
+//                 }
+//             }))
+//             await Product.bulkWrite(bulkOption,{})
+        
+//             // clear cart depend on cartId
+//             await Cart.findByIdAndDelete(cartId)
+//         }
+// }
+
+// //@desc     this will run when stripe payment success paid
+// //@route    POST /webhook-checkout
+// //@access   Protected/User
+// const webhookCheckout=(req, res, next) => {
+//     const sig = req.headers['stripe-signature'];
+//     let event;
+//     try {
+//         event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WBHOOK_SECRET);
+//     } catch (err) {
+//         return res.status(400).send(`Webhook Error: ${err.message}`);
+//     }
+    
+//   // Handle the event
+//   if(event.type === 'checkout.session.completed') {
+//     //create order
+//     createCartOrder(event.data.object);
+//   }
+
+//   res.status(200).json({received:true})
+// }
 module.exports = {
     createCashOrder,
     findAllOrders,
