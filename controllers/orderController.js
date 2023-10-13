@@ -212,6 +212,7 @@ const webhookCheckout=asyncHandler(async(req, res, next) => {
   }
   if (event.type === 'checkout.session.completed') {
     //  Create order
+    console.log(event.data.object)
     createCardOrder(event.data.object);
   }
 
