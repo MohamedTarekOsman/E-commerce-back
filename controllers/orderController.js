@@ -168,6 +168,7 @@ const webhookCheckout=(req, res, next) => {
   if(event.type === 'checkout.session.completed') {
     console.log('Create order here....')
   }
+}
 module.exports = {
     createCashOrder,
     findAllOrders,
