@@ -30,7 +30,7 @@ app.options('*', cors());
 app.use(compression());
 
 //checkout webhook
-app.post('/webhook', express.raw({type: 'application/json'}), webhookCheckout);
+app.post('/webhook-checkout', express.raw({type: 'application/json'}), webhookCheckout);
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'uploads')));
