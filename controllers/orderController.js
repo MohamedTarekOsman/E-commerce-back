@@ -5,7 +5,7 @@ const Product = require("../models/productModel");
 const ApiError = require("../utilities/ApiError");
 const factory = require('./handlersFactory');
 const asyncHandler = require('express-async-handler');
-const { response } = require("express");
+
 
 
 
@@ -130,21 +130,6 @@ const chekoutSession=asyncHandler(async(req,res,next)=>{
 
 
     // 3) create stripe checkout session
-    // const session = await stripe.checkout.sessions.create({
-    //     line_items:[{
-    //         name:req.user.name,
-    //         unit_amount:totalOrderPrice*100,
-    //         currency:"egp",
-    //         quantity:1,
-
-    //     }],
-    //     mode:'payment',
-    //     success_url:`${req.protocol}://${req.get('host')}/orders`,
-    //     cancel_url:`${req.protocol}://${req.get('host')}/cart`,
-    //     customer_email:req.user.email,
-    //     client_reference_id:req.params.cartId,
-    //     metadata:req.body.shippingAddress
-    // })
     const session = await stripe.checkout.sessions.create({
         line_items: [{
             price_data: {
@@ -168,6 +153,34 @@ const chekoutSession=asyncHandler(async(req,res,next)=>{
     // 4)send session to response
     res.status(200).json({status:'success',session})
 })
+
+
+const webhookCheckout=(req, res, next) => {
+    const sig = req.headers['stripe-signature'];
+  
+    let event;
+  
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WBHOOK_SECRET);
+    } catch (err) {
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+    
+  // Handle the event
+  switch (event.type) {
+    case 'checkout.session.completed':
+      const checkoutSessionCompleted = event.data.object;
+      console.log('Create Order Here.....')
+      // Then define and call a function to handle the event checkout.session.completed
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  res.send();
+}
 module.exports = {
     createCashOrder,
     findAllOrders,
@@ -175,5 +188,6 @@ module.exports = {
     findSpecificOrder,
     updateOrderToPaid,
     updateOrderToDelivered,
-    chekoutSession
+    chekoutSession,
+    webhookCheckout
 }

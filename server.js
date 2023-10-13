@@ -15,6 +15,7 @@ const { globalError } = require('./middleWares/ErrorMiddleWare');
 
 //Routes
 const moubteRoutes=require('./routes');
+const { webhookCheckout } = require('./controllers/orderController');
 
 //global using express middleware 
 
@@ -28,13 +29,17 @@ app.options('*', cors());
 //compress all responses
 app.use(compression());
 
+//checkout webhook
+app.post('/webhook', express.raw({type: 'application/json'}), webhookCheckout);
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'uploads')));
 
 
 
 // connect to the database
-const dbconnection = require('./config/database')
+const dbconnection = require('./config/database');
+
 
 dbconnection()
 
