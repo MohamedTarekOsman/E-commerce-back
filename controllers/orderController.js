@@ -198,7 +198,7 @@ const createCardOrder = async (session) => {
 //@access   Protected/User
 const webhookCheckout=asyncHandler(async(req, res, next) => {
   const sig = req.headers['stripe-signature'];
-  const reqBuffer = await buffer(req)
+  const reqBuffer = await buffer(req.body)
   let event;
 
   try {
