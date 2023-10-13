@@ -192,7 +192,9 @@ const createCartOrder=async(session)=>{
         }
 }
 
-
+//@desc     this will run when stripe payment success paid
+//@route    POST /webhook-checkout
+//@access   Protected/User
 const webhookCheckout=(req, res, next) => {
     const sig = req.headers['stripe-signature'];
     let event;
