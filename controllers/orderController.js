@@ -6,7 +6,7 @@ const ApiError = require("../utilities/ApiError");
 const factory = require('./handlersFactory');
 const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
-
+const { buffer } = require('micro')
 
 
 
@@ -198,12 +198,12 @@ const createCardOrder = async (session) => {
 //@access   Protected/User
 const webhookCheckout=asyncHandler(async(req, res, next) => {
   const sig = req.headers['stripe-signature'];
-
+  const reqBuffer = await buffer(req)
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(
-      req.body,
+      reqBuffer,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
@@ -211,7 +211,7 @@ const webhookCheckout=asyncHandler(async(req, res, next) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  console.log(event.data.object)
+
   if (event.type === 'checkout.session.completed') {
     //  Create order
     createCardOrder(event.data.object);
