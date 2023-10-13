@@ -157,30 +157,17 @@ const chekoutSession=asyncHandler(async(req,res,next)=>{
 
 const webhookCheckout=(req, res, next) => {
     const sig = req.headers['stripe-signature'];
-  
     let event;
-  
     try {
-      event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WBHOOK_SECRET);
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WBHOOK_SECRET);
     } catch (err) {
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
     
   // Handle the event
-  switch (event.type) {
-    case 'checkout.session.completed':
-      const checkoutSessionCompleted = event.data.object;
-      console.log('Create Order Here.....')
-      // Then define and call a function to handle the event checkout.session.completed
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
+  if(event.type === 'checkout.session.completed') {
+    console.log('Create order here....')
   }
-
-  // Return a 200 response to acknowledge receipt of the event
-  res.send();
-}
 module.exports = {
     createCashOrder,
     findAllOrders,
