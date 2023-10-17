@@ -18,6 +18,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^7.1.1",
     "express-validator": "^7.0.1",
     "joi": "^17.10.1",
     "joi-phone-number": "^5.1.1",

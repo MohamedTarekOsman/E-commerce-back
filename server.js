@@ -7,11 +7,14 @@ const morgan = require('morgan');
 const dotenv=require('dotenv');
 const cors=require('cors');
 const compression=require('compression');
+const rateLimit=require('express-rate-limit');
 
 //custom modules
 dotenv.config({path:"config.env"})
 const ApiError = require('./utilities/ApiError');
 const { globalError } = require('./middleWares/ErrorMiddleWare');
+
+
 
 //Routes
 const moubteRoutes=require('./routes');
@@ -22,6 +25,14 @@ const { webhookCheckout } = require('./controllers/orderController');
 
 const app=express();
 
+//brute force protection
+const limiter=rateLimit({
+    windowMs:15*60*1000,
+    max:100,
+    message:'too many accounts created from this Ip , try again in 15 munites'
+})
+app.use('/api',limiter)
+
 //enable other domains to access your application
 app.use(cors());
 app.options('*', cors());
@@ -30,9 +41,9 @@ app.options('*', cors());
 app.use(compression());
 
 //checkout webhook
-    app.post('/webhook-checkout', express.raw({type: 'application/json'}), webhookCheckout);
+app.post('/webhook-checkout', express.raw({type: 'application/json'}), webhookCheckout);
 
-app.use(express.json());
+app.use(express.json({limit:'20kb'}));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
 
