@@ -12,8 +12,8 @@ router.use('/:categoryId/subcategrories',SubCategoryRoute )
 router.route('/')
 .get(getCategories)
 .post(
-    authController.protect,
-    authController.allowedTo('admin','manager'),
+    // authController.protect,
+    // authController.allowedTo('admin','manager'),
     uploadCategoryImage,
     resizeImage,
     createcategoryValidator,
@@ -24,10 +24,14 @@ router.route('/')
 
 router.route('/:id')
 .get(getcategoryValidator,getCategory)
-.put(authController.protect,
-    authController.allowedTo('admin','manager'),uploadCategoryImage,resizeImage,updatecategoryValidator,applyCategorySlugify,updateCategory)
-.delete(authController.protect,
-    authController.allowedTo('admin'),deletecategoryValidator,deleteCategory)
+.put(
+    // authController.protect,
+    // authController.allowedTo('admin','manager'),
+    uploadCategoryImage,resizeImage,updatecategoryValidator,applyCategorySlugify,updateCategory)
+.delete(
+    // authController.protect,
+    // authController.allowedTo('admin'),
+    deletecategoryValidator,deleteCategory)
 
 
 
