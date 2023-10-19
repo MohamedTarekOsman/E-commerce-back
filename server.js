@@ -5,7 +5,7 @@ const path = require('path');
 const express=require('express');
 const morgan = require('morgan');
 const dotenv=require('dotenv');
-//const cors=require('cors');
+const cors=require('cors');
 const compression=require('compression');
 const rateLimit=require('express-rate-limit');
 
@@ -34,8 +34,8 @@ const limiter=rateLimit({
 app.use('/api',limiter)
 
 //enable other domains to access your application
-// app.use(cors());
-// app.options('*', cors());
+app.use(cors());
+//app.options('*', cors());
 
 //compress all responses
 app.use(compression());
