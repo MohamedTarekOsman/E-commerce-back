@@ -34,8 +34,8 @@ const limiter=rateLimit({
 app.use('/api',limiter)
 
 //enable other domains to access your application
+app.options('*', cors());
 app.use(cors());
-//app.options('*', cors());
 
 //compress all responses
 app.use(compression());
