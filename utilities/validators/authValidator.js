@@ -16,6 +16,10 @@ const signUpValidator=(req, res, next)=> {
             'string.min': 'password  must be at least 8 characters long.',
             'any.required': 'password is required.',
         }),
+        phone:Joi.string().min(11).required().messages({
+            'any.required': 'phone is required.',
+            'string.min': 'phone  must be at least 11 number long.',
+        })
     })
     const options = {
       abortEarly: false, // include all errors
