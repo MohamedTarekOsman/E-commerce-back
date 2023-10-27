@@ -14,7 +14,7 @@ const uploadBrandImage=uploadSingleImage('image');
 const resizeImage=asyncHandler(async function (req,res,next){
     if(req.file){
         const filename=`brand=${uuidv4()}-${Date.now()}.jpeg`;
-        await sharp(req.file.buffer).resize(600,600).toFormat('jpeg').jpeg({quality:90}).toFile(`uploads/brands/${filename}`)
+        await sharp(req.file.buffer).toFormat('png').png({quality:70}).toFile(`uploads/brands/${filename}`)
         //save image to db
         req.body.image=filename;
     }
