@@ -2,6 +2,7 @@ const Joi = require('joi');
 const CategoryModel = require('../../models/categoryModel');
 const SubCategory = require('../../models/subCategoryModel');
 const ApiError = require('../ApiError');
+const { request } = require('express');
 const isId = (value, helpers) => {
     if (typeof(value)!=='string'||value.length!==24) {
         return helpers.error('category.notFound'); 
@@ -20,7 +21,7 @@ const validationChildrenForCreateProduct =async(req, res,next) => {
             return next(new ApiError(`PriceAfterDiscount must be lower than Price`,404));
         }
     }
-    if(req.body.subCategory){
+    if(Array.isArray(req.body.subCategory)){
         const subCategoryispartofDB=req.body.subCategory.every(item => subcategoryIds.includes(item));
         const subCategoryispartofCategory=req.body.subCategory.every(item => subcategorypartofCategory.includes(item));
         if(!subCategoryispartofDB){
@@ -61,13 +62,13 @@ const createProductValidator=(req, res, next)=> {
         priceAfterDiscount: Joi.number().precision(2).messages({
             'number.base': 'priceAfterDiscount must be a number.',
         }),
-        colors: Joi.array().items(Joi.string()).messages({
+        colors: Joi.array().items(Joi.string()).single().messages({
             'array.base': 'colors should be array of string',
         }),
         imageCover: Joi.string().required().messages({
             'any.required': 'imageCover is required.',
         }),
-        images: Joi.array().messages({
+        images: Joi.array().items(Joi.string()).single().messages({
             'array.base': 'images should be array',
         }),
         category: Joi.string().custom(isId,'validation id').required()
@@ -75,7 +76,9 @@ const createProductValidator=(req, res, next)=> {
             'any.required': 'Category is required.',
             'category.notFound': 'Invalied ID Format.',
         }),
-        subCategory: Joi.array().items(Joi.string()),
+        subCategory: Joi.array().items(Joi.string()).single().messages({
+            'array.base': 'subCategory should be array of string',
+        }),
         brand: Joi.any().custom(isId,'validation id'),
         ratingsAverage: Joi.number().precision(1).max(5).min(1).messages({
             'number.max': 'ratingsAverage must be above or equal 1.0.',

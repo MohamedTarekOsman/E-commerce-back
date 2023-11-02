@@ -16,7 +16,7 @@ const productSchema=new mongoose.Schema({
     description:{
         type: String,
         required: [true,'description is required'],
-        minlength:[10,"Too short product description"]
+        minlength:[2,"Too short product description"]
     },
     quantity:{
         type: Number,
