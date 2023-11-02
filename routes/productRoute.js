@@ -11,7 +11,8 @@ router.use('/:productId/reviews',reviewRoute )
 
 router.route('/')
 .get(getProducts)
-.post(uploadProductImages,resizeProductImages,createProductValidator,applyProductSlugify,validationChildrenForCreateProduct,createProduct)
+.post(authController.protect,
+    authController.allowedTo('admin','manager'),uploadProductImages,resizeProductImages,createProductValidator,applyProductSlugify,validationChildrenForCreateProduct,createProduct)
 
 
 router.route('/:id')
