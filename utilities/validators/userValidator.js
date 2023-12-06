@@ -90,6 +90,8 @@ const updateUserValidator = (req, res, next) => {
         next();
     }
 };
+
+
 const updateUserValidatorForLogged = (req, res, next) => {
     const schema = Joi.object({
         name:Joi.string().min(3).max(32).required().messages({

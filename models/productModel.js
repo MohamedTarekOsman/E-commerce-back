@@ -82,34 +82,46 @@ productSchema.pre(/^find/,function (next){
     });
     next();
 })
+
+productSchema.pre(/^find/,function (next){
+    this.populate({
+        path:'brand',
+        select:'name',
+    });
+    next();
+})
+
 //on find one/all , update
-productSchema.post('init',(doc)=>{
-    if(doc.imageCover){
-        const imageURL=`${process.env.BASE_URL}/products/${doc.imageCover}`;
-        doc.imageCover=imageURL;
-    }
-    if(doc.images){
-        const imageList=[]
-        doc.images.forEach((image)=>{
-            const imageURL=`${process.env.BASE_URL}/products/${image}`;
-            imageList.push(imageURL);
-        })
-        doc.images=imageList;
-    }
-})
+// productSchema.post('init',(doc)=>{
+//     if(doc.imageCover){
+//         const imageURL=`${process.env.BASE_URL}/products/${doc.imageCover}`;
+//         doc.imageCover=imageURL;
+//     }
+//     if(doc.images){
+//         const imageList=[]
+//         doc.images.forEach((image)=>{
+//             const imageURL=`${process.env.BASE_URL}/products/${image}`;
+//             imageList.push(imageURL);
+//         })
+//         doc.images=imageList;
+//     }
+// })
 //on create
-productSchema.post('save',(doc)=>{
-    if(doc.imageCover){
-        const imageURL=`${process.env.BASE_URL}/products/${doc.imageCover}`;
-        doc.imageCover=imageURL;
-    }
-    if(doc.images){
-        const imageList=[]
-        doc.images.forEach((image)=>{
-            const imageURL=`${process.env.BASE_URL}/products/${image}`;
-            imageList.push(imageURL);
-        })
-        doc.images=imageList;
-    }
-})
+// productSchema.post('save',(doc)=>{
+//     if(doc.imageCover){
+//         const imageURL=`${process.env.BASE_URL}/products/${doc.imageCover}`;
+//         doc.imageCover=imageURL;
+//     }
+//     if(doc.images){
+//         const imageList=[]
+//         doc.images.forEach((image)=>{
+//             const imageURL=`${process.env.BASE_URL}/products/${image}`;
+//             imageList.push(imageURL);
+//         })
+//         doc.images=imageList;
+//     }
+// })
+
+
+
 module.exports=mongoose.model('Product',productSchema)

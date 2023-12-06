@@ -28,7 +28,7 @@ const app=express();
 //brute force protection
 const limiter=rateLimit({
     windowMs:15*60*1000,
-    max:100,
+    max:200,
     message:'too many accounts created from this Ip , try again in 15 munites'
 })
 app.use('/api',limiter)
@@ -51,8 +51,6 @@ app.use(express.static(path.join(__dirname, 'uploads')));
 
 // connect to the database
 const dbconnection = require('./config/database');
-
-
 dbconnection()
 
 

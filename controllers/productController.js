@@ -17,18 +17,18 @@ const uploadProductImages=uploadMixOfImages([
 const resizeProductImages=asyncHandler(async(req,res,next)=>{
         if(req.files.imageCover){
             const imageCoverfilename=`product=${uuidv4()}-${Date.now()}-cover.jpeg`;
-            await sharp(req.files.imageCover[0].buffer).resize(2000,1333).toFormat('jpeg').jpeg({quality:95}).toFile(`uploads/products/${imageCoverfilename}`)
+            await sharp(req.files.imageCover[0].buffer).toFormat('png').png({quality:70}).toFile(`uploads/products/${imageCoverfilename}`)
             //save image to db
-            req.body.imageCover=imageCoverfilename;
+            req.body.imageCover=process.env.BASE_URL+'/'+'products/'+imageCoverfilename;
         }
         if(req.files.images){
             req.body.images=[]
         await Promise.all(
                 req.files.images.map(async(image,index)=>{
                     const imageName=`product=${uuidv4()}-${Date.now()}-${index+1}.jpeg`;
-                    await sharp(image.buffer).resize(800,800).toFormat('jpeg').jpeg({quality:95}).toFile(`uploads/products/${imageName}`)
+                    await sharp(image.buffer).resize(2000,2000).toFormat('png').png({quality:70}).toFile(`uploads/products/${imageName}`)
                     //save image to db
-                    req.body.images.push(imageName);
+                    req.body.images.push(process.env.BASE_URL+'/'+'products/'+imageName);
                 })
             )
         }

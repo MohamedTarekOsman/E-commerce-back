@@ -37,10 +37,10 @@ const getOne = (Model,populationOpt) =>asyncHandler(async(req,res,next)=>{
     const {id}=req.params;
     // build query
     let query= Model.findById(id);
+    
     if(populationOpt){
         query=query.populate(populationOpt)
     }
-
     // execute query
     const document=await query;
     if(!document){

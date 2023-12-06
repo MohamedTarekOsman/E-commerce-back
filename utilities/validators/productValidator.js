@@ -2,7 +2,7 @@ const Joi = require('joi');
 const CategoryModel = require('../../models/categoryModel');
 const SubCategory = require('../../models/subCategoryModel');
 const ApiError = require('../ApiError');
-const { request } = require('express');
+
 const isId = (value, helpers) => {
     if (typeof(value)!=='string'||value.length!==24) {
         return helpers.error('category.notFound'); 
