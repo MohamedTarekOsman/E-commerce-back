@@ -59,6 +59,9 @@ class ApiFeatures{
         const skip=(page-1)*limit;
         const endIndex=page*limit;
 
+        this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
+
+        
         //pagination result
         const pagination={}
         pagination.currentPage=page;
@@ -76,7 +79,7 @@ class ApiFeatures{
             pagination.prev=page-1
         }
 
-        this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
+
         this.paginationResult=pagination
         return this
     }

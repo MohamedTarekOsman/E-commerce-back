@@ -55,13 +55,16 @@ const getAll=(Model,modelName='')=>asyncHandler(async(req,res)=>{
         {filter=req.filterObj}
     }
     //build query
-    const documentsCount=await Model.countDocuments();
-    const apiFeatures=new ApiFeatures(Model.find(filter), req.query).paginate(documentsCount).filter().search(modelName).sort();
+    const apiFeatures=new ApiFeatures(Model.find(filter), req.query).limitFields().filter().search(modelName).sort();
     
+    // Apply pagination after filer and search
+    const documentsCount=await Model.countDocuments(apiFeatures.mongooseQuery);
+    apiFeatures.paginate(documentsCount);
+
     //excute query
     const {mongooseQuery,paginationResult}=apiFeatures
     const document=await mongooseQuery
-    res.status(200).json({results:document.length,paginationResult,data: document})
+    res.status(200).json({results:documentsCount,paginationResult,data: document})
 })
 module.exports ={
     deleteOne,
