@@ -25,6 +25,11 @@ const { webhookCheckout } = require('./controllers/orderController');
 
 const app=express();
 
+//enable other domains to access your application
+app.use(cors());
+app.options('*', cors());
+app.enable('trust proxy');
+
 //brute force protection
 const limiter=rateLimit({
     windowMs:15*60*1000,
@@ -33,9 +38,6 @@ const limiter=rateLimit({
 })
 app.use('/api',limiter)
 
-//enable other domains to access your application
-app.options('*', cors());
-app.use(cors());
 
 
 
@@ -43,6 +45,7 @@ app.use(cors());
 //compress all responses
 app.use(compression());
 
+app.use(cors());
 //checkout webhook
 app.post('/webhook-checkout', express.raw({type: 'application/json'}), webhookCheckout);
 
