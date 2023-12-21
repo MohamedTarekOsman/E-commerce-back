@@ -34,14 +34,15 @@ const limiter=rateLimit({
 app.use('/api',limiter)
 
 //enable other domains to access your application
- app.options('*', cors());
+// app.options('*', cors());
+app.use(cors());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', '*');
     next();
-  });
-app.use(cors());
+    });
+
 
 
 //compress all responses
