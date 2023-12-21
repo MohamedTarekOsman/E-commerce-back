@@ -27,7 +27,13 @@ const app=express();
 
 //enable other domains to access your application
 app.use(cors());
-
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://e-commerce-front-woad-phi.vercel.app');
+    // Add other headers if needed
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+  });
 
 
 //brute force protection
