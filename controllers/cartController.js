@@ -65,7 +65,11 @@ const addProductToCart =asyncHandler(async(req,res,next)=>{
 //@route    GET /api/v1/cart
 //@access   Private/User
 const getLoggedUserCart =asyncHandler(async(req,res,next)=>{
-    const cart =await Cart.findOne({user:req.user._id})
+    const cart =await Cart.findOne({user:req.user._id}).populate({
+        path: 'cartItems.product',
+        select: 'title imageCover ratingsAverage brand category ',
+        populate: { path: 'brand', select: 'name -_id', model: 'Brand' },
+      })
     if(!cart) {
         return next(new ApiError("there is no cart for this user",404))
     }

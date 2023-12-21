@@ -1,6 +1,6 @@
 const express = require('express');
 const authController=require('../controllers/authController');
-const { addAddress, removeAddress, getLoggedUserAddresses } = require('../controllers/addressController');
+const { addAddress, removeAddress, getLoggedUserAddresses, getAddress, updateAddress } = require('../controllers/addressController');
 const router = express.Router();
 
 
@@ -11,7 +11,9 @@ router.route('/')
 .get(getLoggedUserAddresses)
 
 router.route('/:addressId')
-.delete(removeAddress)
+.get(getAddress)
+.delete( removeAddress)
+.put(updateAddress);
 
 
 

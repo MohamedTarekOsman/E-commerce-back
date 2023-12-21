@@ -28,7 +28,7 @@ const app=express();
 //brute force protection
 const limiter=rateLimit({
     windowMs:15*60*1000,
-    max:200,
+    max:2000,
     message:'too many accounts created from this Ip , try again in 15 munites'
 })
 app.use('/api',limiter)

@@ -16,6 +16,7 @@ const signUp=asyncHandler(async(req,res,next)=>{
         name:req.body.name,
         email:req.body.email,
         password:req.body.password,
+        phone:req.body.phone
     })
 
     //generate Token
@@ -112,7 +113,7 @@ const forgetPassword=asyncHandler(async(req,res,next)=>{
     await user.save();
 
     // 4)send reset code via email
-    const message = `Hi ${user.name},\n We received a request to reset the password on your E-commerce Account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The E-shop Team`;
+    const message = ` Hi ${user.name},\n We received a request to reset the password on your E-commerce Account. \n(   ${resetCode}   )\n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The E-shop Team`;
     try {
     await sendEmail({
         email: user.email,

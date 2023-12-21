@@ -21,7 +21,7 @@ router.route('/')
 
 router.route('/:id')
 .get(getUserValidator,getUser)
-.put(uploadUserImage,resizeImage,updateUserValidator,applyUserSlugify,updateUser)
+.put(uploadUserImage,resizeImage,applyUserSlugify,updateUser)
 .delete(deleteUserValidator,deleteUser)
 
 
