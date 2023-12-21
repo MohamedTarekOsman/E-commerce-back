@@ -121,6 +121,9 @@ const { globalError } = require('./middleWares/ErrorMiddleWare');
 const moubteRoutes = require('./routes');
 const { webhookCheckout } = require('./controllers/orderController');
 
+
+// Enable other domains to access your application
+app.use(cors());
 // Global using express middleware
 const app = express();
 
@@ -132,8 +135,7 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// Enable other domains to access your application
-app.use(cors());
+
 
 // Compress all responses
 app.use(compression());
