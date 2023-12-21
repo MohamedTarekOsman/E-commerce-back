@@ -34,7 +34,6 @@ const limiter=rateLimit({
 app.use('/api',limiter)
 
 //enable other domains to access your application
-app.options('*', cors());
 app.use(cors());
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
