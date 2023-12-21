@@ -27,7 +27,7 @@ const app=express();
 
 //enable other domains to access your application
 app.use(cors());
-app.options('*', cors());
+
 
 
 //brute force protection
