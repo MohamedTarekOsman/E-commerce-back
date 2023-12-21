@@ -17,7 +17,8 @@ router.route('/')
 
 router.route('/:id')
 .get(getProductValidator,getProduct)
-.put(uploadProductImages,resizeProductImages,updateProductValidator,applyProductSlugify,updateProduct)
+.put(authController.protect,
+    authController.allowedTo('admin','manager'),uploadProductImages,resizeProductImages,updateProductValidator,applyProductSlugify,updateProduct)
 .delete(authController.protect,
     authController.allowedTo('admin'),deleteProductValidator,deleteProduct)
 
