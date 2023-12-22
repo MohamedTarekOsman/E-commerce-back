@@ -1,5 +1,5 @@
 const express = require('express');
-const {createCashOrder, findAllOrders, filterOrderForLoggedUser, updateOrderToPaid, updateOrderToDelivered, chekoutSession } = require('../controllers/orderController');
+const {createCashOrder, findAllOrders, filterOrderForLoggedUser, updateOrderToPaid, updateOrderToDelivered, chekoutSession, findSpecificOrder } = require('../controllers/orderController');
 const authController=require('../controllers/authController')
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.route('/')
 .get(authController.allowedTo('user','admin','manager'),filterOrderForLoggedUser,findAllOrders)
 
 router.route('/:id')
-.get(findAllOrders)
+.get(findSpecificOrder)
 
 router.put('/:id/pay',authController.allowedTo('admin','manager'),updateOrderToPaid)
 router.put('/:id/deliver',authController.allowedTo('admin','manager'),updateOrderToDelivered)
