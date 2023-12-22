@@ -1,5 +1,5 @@
 const mongoose =require('mongoose')
-
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 const orderSchema =new mongoose.Schema({
     user:{
         type:mongoose.Schema.Types.ObjectId,
@@ -66,4 +66,5 @@ orderSchema.pre(/^find/,function(next){
     this.populate({path:'user',select:'name profileImg email phone'}).populate({path:'cartItems.product',select:'title imageCover'})
     next();
 })
+orderSchema.plugin(AutoIncrement, { inc_field: 'id' });
 module.exports = mongoose.model('Order', orderSchema)
