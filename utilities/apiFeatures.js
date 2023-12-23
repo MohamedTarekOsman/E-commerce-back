@@ -47,7 +47,7 @@ class ApiFeatures{
             }else{
                 query={ name: { $regex: this.queryString.keyword, $options: 'i' } }
             }
-              
+            
             this.mongooseQuery = this.mongooseQuery.find(query);
           }
           return this
