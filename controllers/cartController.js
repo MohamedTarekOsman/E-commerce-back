@@ -67,7 +67,7 @@ const addProductToCart =asyncHandler(async(req,res,next)=>{
 const getLoggedUserCart =asyncHandler(async(req,res,next)=>{
     const cart =await Cart.findOne({user:req.user._id}).populate({
         path: 'cartItems.product',
-        select: 'title imageCover ratingsAverage brand category ',
+        select: 'title imageCover ratingsAverage brand category priceAfterDiscount',
         populate: { path: 'brand', select: 'name -_id', model: 'Brand' },
       })
     if(!cart) {
