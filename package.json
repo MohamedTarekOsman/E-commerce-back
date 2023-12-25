@@ -4,8 +4,12 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "start":"node server.js",
     "dev": "nodemon server.js",
     "prod": "SET NODE_ENV=production & node server.js"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "keywords": [],
   "author": "",
