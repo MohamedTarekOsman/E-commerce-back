@@ -32,7 +32,7 @@ const addProductToCart =asyncHandler(async(req,res,next)=>{
             cartItems:[{
                 product:req.body.productId,
                 color:req.body.color,
-                price:product.price
+                price:product.priceAfterDiscount?product.priceAfterDiscount:product.price
             }]
         })
 
@@ -49,7 +49,7 @@ const addProductToCart =asyncHandler(async(req,res,next)=>{
             cart.cartItems.push({
                 product:req.body.productId,
                 color:req.body.color,
-                price:product.price
+                price:product.priceAfterDiscount?product.priceAfterDiscount:product.price
             })
         }
     }
