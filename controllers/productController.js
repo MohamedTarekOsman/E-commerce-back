@@ -19,7 +19,7 @@ const resizeProductImages=asyncHandler(async(req,res,next)=>{
             const imageCoverfilename=`product=${uuidv4()}-${Date.now()}-cover.jpeg`;
             await sharp(req.files.imageCover[0].buffer).toFormat('png').png({quality:70}).toFile(`uploads/products/${imageCoverfilename}`)
             //save image to db
-            req.body.imageCover=process.env.BASE_URL+'/uploads'+'products/'+imageCoverfilename;
+            req.body.imageCover=process.env.BASE_URL+'/uploads'+'/products/'+imageCoverfilename;
         }
         if(req.files.images){
             req.body.images=[]
