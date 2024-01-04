@@ -5,7 +5,13 @@ const asyncHandler = require('express-async-handler');
 const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
 const { uploadMixOfImages } = require('../middleWares/uploadImageMiddleware');
+const cloudinary = require('cloudinary').v2;
 
+cloudinary.config({ 
+    cloud_name: process.env.CLOUD_NAME, 
+    api_key: process.env.API_KEY, 
+    api_secret: process.env.API_SECRET 
+});
 
 
 const uploadProductImages=uploadMixOfImages([
@@ -17,18 +23,67 @@ const uploadProductImages=uploadMixOfImages([
 const resizeProductImages=asyncHandler(async(req,res,next)=>{
         if(req.files.imageCover){
             const imageCoverfilename=`product=${uuidv4()}-${Date.now()}-cover.jpeg`;
-            await sharp(req.files.imageCover[0].buffer).toFormat('png').png({quality:70}).toFile(`uploads/products/${imageCoverfilename}`)
-            //save image to db
-            req.body.imageCover=process.env.BASE_URL+'/'+'products/'+imageCoverfilename;
+            // Use cloudinary.uploader.upload instead of cloudinary.v2.uploader.upload
+            const result = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    {
+                    public_id: imageCoverfilename,
+                    folder: 'products', // Optional: specify a folder in Cloudinary
+                    format: 'png', // Optional: specify the desired format
+                    transformation: [
+                        { quality: '70' },
+                    ],
+                    },
+                    (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                }
+                );
+                // Pipe the buffer into the upload stream
+                uploadStream.end(req.files.imageCover[0].buffer);
+            });
+            // Save Cloudinary URL to db
+            req.body.imageCover = result.secure_url;
+            // await sharp(req.files.imageCover[0].buffer).toFormat('png').png({quality:70}).toFile(`uploads/products/${imageCoverfilename}`)
+            // //save image to db
+            // req.body.imageCover=process.env.BASE_URL+'/'+'products/'+imageCoverfilename;
         }
         if(req.files.images){
             req.body.images=[]
         await Promise.all(
                 req.files.images.map(async(image,index)=>{
                     const imageName=`product=${uuidv4()}-${Date.now()}-${index+1}.jpeg`;
-                    await sharp(image.buffer).resize(2000,2000).toFormat('png').png({quality:70}).toFile(`uploads/products/${imageName}`)
-                    //save image to db
-                    req.body.images.push(process.env.BASE_URL+'/'+'products/'+imageName);
+                    // Use cloudinary.uploader.upload instead of cloudinary.v2.uploader.upload
+                    const result = await new Promise((resolve, reject) => {
+                    const uploadStream = cloudinary.uploader.upload_stream(
+                    {
+                    public_id: imageName,
+                    folder: 'products', // Optional: specify a folder in Cloudinary
+                    format: 'png', // Optional: specify the desired format
+                    transformation: [
+                        { width: 2000, height: 2000, crop: 'fill' },
+                        { quality: '70' },
+                    ],
+                    },
+                    (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                }
+                );
+                // Pipe the buffer into the upload stream
+                uploadStream.end(image.buffer);
+                });
+                // Save Cloudinary URL to db
+                req.body.images.push(result.secure_url);
+                    // await sharp(image.buffer).resize(2000,2000).toFormat('png').png({quality:70}).toFile(`uploads/products/${imageName}`)
+                    // //save image to db
+                    // req.body.images.push(process.env.BASE_URL+'/'+'products/'+imageName);
                 })
             )
         }

@@ -1,6 +1,7 @@
 const multer = require("multer");
 const ApiError = require("../utilities/ApiError");
 
+
 const uploadSingleImage=(fieldName)=>{
     //disk Storage engine
     const multerStorageDisk=multer.diskStorage({
@@ -22,7 +23,6 @@ const uploadSingleImage=(fieldName)=>{
             cb(new ApiError('only images allowed',404), false)
         }
     }
-
     const upload=multer({storage:multerStorage,fileFilter:multerFilter})
     return upload.single(fieldName)
 }
@@ -39,6 +39,7 @@ const uploadMixOfImages=(arrayOfFields)=>{
     const upload=multer({storage:multerStorage,fileFilter:multerFilter})
     return upload.fields(arrayOfFields)
 }
+
 module.exports={
     uploadSingleImage,
     uploadMixOfImages

@@ -18,20 +18,20 @@ const categorySchema = new mongoose.Schema({
 
 },{timestamps:true}//timestamps make two fields created at , updated at
 );
-//on find one/all , update
-categorySchema.post('init',(doc)=>{
-    if(doc.image){
-        const imageURL=`${process.env.BASE_URL}/categories/${doc.image}`;
-        doc.image=imageURL;
-    }
-})
-//on create
-categorySchema.post('save',(doc)=>{
-    if(doc.image){
-        const imageURL=`${process.env.BASE_URL}/categories/${doc.image}`;
-        doc.image=imageURL;
-    }
-})
+// //on find one/all , update
+// categorySchema.post('init',(doc)=>{
+//     if(doc.image){
+//         const imageURL=`${process.env.BASE_URL}/categories/${doc.image}`;
+//         doc.image=imageURL;
+//     }
+// })
+// //on create
+// categorySchema.post('save',(doc)=>{
+//     if(doc.image){
+//         const imageURL=`${process.env.BASE_URL}/categories/${doc.image}`;
+//         doc.image=imageURL;
+//     }
+// })
 const CategoryModel = mongoose.model("Category", categorySchema);
 
 module.exports=CategoryModel;

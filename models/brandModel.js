@@ -18,18 +18,18 @@ const BrandSchema = new mongoose.Schema({
 
 },{timestamps:true}//timestamps make two fields created at , updated at
 );
-//on find one/all , update
-BrandSchema.post('init',(doc)=>{
-    if(doc.image){
-        const imageURL=`${process.env.BASE_URL}/brands/${doc.image}`;
-        doc.image=imageURL;
-    }
-})
-//on create
-BrandSchema.post('save',(doc)=>{
-    if(doc.image){
-        const imageURL=`${process.env.BASE_URL}/brands/${doc.image}`;
-        doc.image=imageURL;
-    }
-})
+// //on find one/all , update
+// BrandSchema.post('init',(doc)=>{
+//     if(doc.image){
+//         const imageURL=`${process.env.BASE_URL}/brands/${doc.image}`;
+//         doc.image=imageURL;
+//     }
+// })
+// //on create
+// BrandSchema.post('save',(doc)=>{
+//     if(doc.image){
+//         const imageURL=`${process.env.BASE_URL}/brands/${doc.image}`;
+//         doc.image=imageURL;
+//     }
+// })
 module.exports = mongoose.model("Brand", BrandSchema);

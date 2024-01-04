@@ -5,7 +5,13 @@ const factory=require('./handlersFactory');
 const sharp = require('sharp');
 const asyncHandler = require('express-async-handler');
 const { uploadSingleImage } = require('../middleWares/uploadImageMiddleware');
+const cloudinary = require('cloudinary').v2;
 
+cloudinary.config({ 
+    cloud_name: process.env.CLOUD_NAME, 
+    api_key: process.env.API_KEY, 
+    api_secret: process.env.API_SECRET 
+});
 
 //upload a single image
 const uploadCategoryImage=uploadSingleImage('image');
@@ -16,9 +22,34 @@ const uploadCategoryImage=uploadSingleImage('image');
 const resizeImage=asyncHandler(async function (req,res,next){
     if(req.file){
         const filename=`category=${uuidv4()}-${Date.now()}.jpeg`;
-        await sharp(req.file.buffer).toFormat('png').png({quality:70}).toFile(`uploads/categories/${filename}`)
+            // Use cloudinary.uploader.upload instead of cloudinary.v2.uploader.upload
+            const result = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    {
+                    public_id: filename,
+                    
+                    folder: 'categories', // Optional: specify a folder in Cloudinary
+                    format: 'png', // Optional: specify the desired format
+                    transformation: [
+                        { quality: '70' },
+                    ],
+                    },
+                    (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                }
+                );
+                // Pipe the buffer into the upload stream
+                uploadStream.end(req.file.buffer);
+            });
+            // Save Cloudinary URL to db
+            req.body.image = result.secure_url;
+        // await sharp(req.file.buffer).toFormat('png').png({quality:70}).toFile(`uploads/categories/${filename}`)
         //save image to db 
-        req.body.image=filename;
+        //req.body.image=filename;
     }
     next();
 })
